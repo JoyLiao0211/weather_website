@@ -105,20 +105,18 @@ body {
   border-width: 0;
   position: relative;
   appearance: none;
+  background-color: var(--color-primary-50);
   /* border: 1px solid red; */
 }
 
 
 #radarSelector > option {
   padding: 10px;
+  background-color: #f1f3f4;
 }
 
-#radarSelector::after{
-  content: "▼"; /* Unicode character for a down arrow */
-  position: absolute;
-  right: 15px;
-  pointer-events: none;
-  border: 1px solid red;
+#radarSelector:focus {
+  background-color: var(--color-primary-100);
 }
 
 #map {
