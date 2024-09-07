@@ -29,29 +29,40 @@
 <body>
 
     <h1><center>降雨報報</center></h1>
-
-
+  
     <button onclick="getLocation()">顯示所在地的降雨預報</button><br>
+  
+    <!-- Address input for searching a specific location -->
     <input type="text" id="addressInput" placeholder="輸入地址">
     <button onclick="searchAddress()">搜尋地址</button>
-
     <br>
-
+  
+    <!-- Dropdown to select radar overlay -->
+    <label for="radarSelector">選擇雷達覆蓋圖：</label>
+    <select id="radarSelector">
+      <option value="shulin">樹林雷達</option>
+      <option value="nantun">南屯雷達</option>
+      <option value="combined">整合雷達圖</option>
+    </select>
+  
+    <br>
+  
     <!-- The map container -->
     <div id="map" style="height: 600px;"></div>
-    
+  
     <!-- Checkbox to toggle radar overlay -->
     <input type="checkbox" id="toggleOverlay" checked>
     <label for="toggleOverlay">顯示雷達回波圖</label>
-
+  
     <!-- Slider to control radar overlay opacity -->
     <input type="range" id="overlayOpacity" min="0" max="100" value="80">
     <label for="overlayOpacity">不透明度</label>
-
+  
     <!-- Link to the external JavaScript file -->
     <script src="script.js"></script>
+  
+  </body>
+  
 
-</body>
-  
-  
+
 </html>

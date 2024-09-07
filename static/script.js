@@ -1,77 +1,214 @@
+// Initialize the map
 var map = L.map('map').setView([25.1, 121.6], 11);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
 }).addTo(map);
 
-// 定義顏色等級與對應顏色
-var colorlevel = [0,1,2,6,10,15,20,30,40,50,70,90,110,130,150,200,300,400];
-var cwb_data = ['None','#9BFFFF','#00CFFF','#0198FF','#0165FF','#309901','#32FF00','#F8FF00','#FFCB00','#FF9A00','#FA0300','#CC0003','#A00000','#98009A','#C304CC','#F805F3','#FECBFF'];
-
+// Variables to hold map elements
 var rectangles = [];
+var overlay = null;
 
-// 根據雨量值找到對應的顏色
+// Color and grid settings for rainfall
+var colorlevel = [0, 1, 2, 6, 10, 15, 20, 30, 40, 50, 70, 90, 110, 130, 150, 200, 300, 400];
+var cwb_data = ['None', '#9BFFFF', '#00CFFF', '#0198FF', '#0165FF', '#309901', '#32FF00', '#F8FF00', '#FFCB00', '#FF9A00', '#FA0300', '#CC0003', '#A00000', '#98009A', '#C304CC', '#F805F3', '#FECBFF'];
+
+var earthRadiusKm = 6371; // Earth's radius in kilometers
+
+// Radar data for different locations
+const radarData = {
+  shulin: {
+    imageUrl: "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png",
+    stationLat: 24.993,
+    stationLon: 121.40070,
+    radiusKm: 150,
+    imageBounds: calculateBounds(24.993, 121.40070, 150)
+  },
+  nantun: {
+    imageUrl: "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png",
+    stationLat: 24.135,
+    stationLon: 120.585,
+    radiusKm: 150,
+    imageBounds: calculateBounds(24.135, 120.585, 150)
+  },
+  combined: {
+    imageUrl: "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png",
+    imageBounds: [[20.5, 118.0], [26.5, 124.0]] // Static bounds for the combined radar
+  }
+};
+
+// Function to calculate image bounds based on radius
+function calculateBounds(lat, lon, radiusKm) {
+  const latDiff = (radiusKm / earthRadiusKm) * (180 / Math.PI);
+  const lonDiff = (radiusKm / (earthRadiusKm * Math.cos(lat * Math.PI / 180))) * (180 / Math.PI);
+
+  return [
+    [lat - latDiff, lon - lonDiff], // Southwest corner
+    [lat + latDiff, lon + lonDiff]  // Northeast corner
+  ];
+}
+
+// Function to get color based on rainfall value
 function getColorForRainfall(value) {
-    for (var i = 0; i < colorlevel.length; i++) {
-        if (value < colorlevel[i]) {
-            return cwb_data[i];
-        }
+  for (var i = 0; i < colorlevel.length; i++) {
+    if (value < colorlevel[i]) {
+      return cwb_data[i];
     }
-    return cwb_data[cwb_data.length - 1];  // 超過最大值時用最後一個顏色
+  }
+  return cwb_data[cwb_data.length - 1];  // Use the last color if it exceeds the max value
 }
 
-// 清除現有網格
+// Clear existing rainfall grid
 function clearGrid() {
-    rectangles.forEach(function(rect) {
-        map.removeLayer(rect);
-    });
-    rectangles = [];
+  rectangles.forEach(function(rect) {
+    map.removeLayer(rect);
+  });
+  rectangles = [];
 }
 
-// 繪製網格
+// Draw the rainfall grid
 function drawGrid(data) {
-    var gridSizeLat = (data.Y[1][0] - data.Y[0][0]);  // 計算緯度格子大小
-    var gridSizeLng = (data.X[0][1] - data.X[0][0]);  // 計算經度格子大小
-    for (var i = 0; i < 441; i++) {
-        console.log(i)
-        for (var j = 0; j < 561; j++) {
-            var bounds = [
-                [data.Y[j][i], data.X[j][i]],  // 左上角座標
-                [data.Y[j][i] + gridSizeLat, data.X[j][i] + gridSizeLng]  // 右下角座標
-            ];
-            if (i==441)
-                console.log(bounds)
-            var color = getColorForRainfall(data.Z[j][i]);
+  var gridSizeLat = (data.Y[1][0] - data.Y[0][0]);  // Latitude grid size
+  var gridSizeLng = (data.X[0][1] - data.X[0][0]);  // Longitude grid size
 
-            if (color !== 'None') {
-                var rect = L.rectangle(bounds, { 
-                    color: color, 
-                    weight: 0,         
-                    fillOpacity: 0.5
-                }).addTo(map);
+  for (var i = 0; i < 441; i++) {
+    for (var j = 0; j < 561; j++) {
+      var bounds = [
+        [data.Y[j][i], data.X[j][i]],  // Top-left coordinate
+        [data.Y[j][i] + gridSizeLat, data.X[j][i] + gridSizeLng]  // Bottom-right coordinate
+      ];
+      var color = getColorForRainfall(data.Z[j][i]);
 
-                rectangles.push(rect);
-            }
-        }
+      if (color !== 'None') {
+        var rect = L.rectangle(bounds, { 
+          color: color, 
+          weight: 0,         
+          fillOpacity: 0.5
+        }).addTo(map);
+
+        rectangles.push(rect);
+      }
     }
-    console.log("test")
+  }
 }
 
-// 從後端獲取數據並更新網格和時間戳
+// Fetch rainfall data from the backend and update the grid
 function updateGrid() {
-    fetch('/rainfall_data')
-        .then(response => response.json())
-        .then(data => {
-            clearGrid();  // 先清除現有網格
-            drawGrid(data);  // 繪製新網格
+  fetch('/rainfall_data')
+    .then(response => response.json())
+    .then(data => {
+      clearGrid();  // Clear current grid
+      drawGrid(data);  // Draw new grid
 
-            var timestampDiv = document.getElementById('timestamp');
-            timestampDiv.innerText = '';  // 先清空
-            timestampDiv.innerText = 'Data Time: ' + data.Datetime;  // 再次設置
-            console.log('Fetched data:', data)
-        });
+      var timestampDiv = document.getElementById('timestamp');
+      timestampDiv.innerText = 'Data Time: ' + data.Datetime;
+    });
 }
 
-updateGrid();
+// Function to display radar overlay
+function displayWeatherOverlay() {
+  const selectedRadar = document.getElementById('radarSelector').value;
+  const radarInfo = radarData[selectedRadar];
 
-setInterval(updateGrid, 300000);
+  if (overlay) {
+    overlay.setUrl(radarInfo.imageUrl);  // Update the radar image URL
+    overlay.setBounds(radarInfo.imageBounds);  // Update the radar bounds
+  } else {
+    overlay = L.imageOverlay(radarInfo.imageUrl, radarInfo.imageBounds, { opacity: 0.8 }).addTo(map);
+  }
+}
+
+// Clear radar overlay
+function clearOverlay() {
+  if (overlay) {
+    map.removeLayer(overlay);
+    overlay = null;
+  }
+}
+
+// Handle grid and radar toggle
+document.getElementById('radarSelector').addEventListener('change', function() {
+  const selectedOption = document.getElementById('radarSelector').value;
+
+  if (selectedOption === "historical") {
+    clearOverlay();  // Clear radar if it's active
+    updateGrid();  // Display the historical rainfall grid
+  } else {
+    clearGrid();  // Clear rainfall grid
+    displayWeatherOverlay();  // Add radar overlay
+  }
+});
+
+// Handle checkbox to toggle radar or grid visibility
+document.getElementById('toggleOverlay').addEventListener('change', function (event) {
+  if (event.target.checked) {
+    const selectedOption = document.getElementById('radarSelector').value;
+    if (selectedOption === "historical") {
+      updateGrid();  // Show historical grid
+    } else {
+      displayWeatherOverlay();  // Show radar
+    }
+  } else {
+    clearOverlay();  // Hide radar
+    clearGrid();  // Hide rainfall grid
+  }
+});
+
+// Handle slider for opacity control
+document.getElementById('overlayOpacity').addEventListener('input', function(event) {
+  const opacityValue = event.target.value / 100;
+  if (overlay) {
+    overlay.setOpacity(opacityValue);  // Adjust opacity of the radar overlay
+  }
+});
+
+// Function to handle address search
+function searchAddress() {
+  const address = document.getElementById('addressInput').value;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        clearOverlay();  // Clear radar
+        displayMap(lat, lon);
+        displayWeatherOverlay();  // Add radar overlay
+      } else {
+        alert('無法找到地址');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('搜尋地址時出錯: ' + error.message);
+    });
+}
+
+// Function to show current location
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    alert("此瀏覽器不支持地理位置服務。");
+  }
+}
+
+function showPosition(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  displayMap(latitude, longitude);
+  displayWeatherOverlay();
+}
+
+function displayMap(lat, lon) {
+  if (!map) {
+    map = L.map('map').setView([lat, lon], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+  } else {
+    map.setView([lat, lon], 11);
+  }
+}
