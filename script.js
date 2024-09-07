@@ -6,7 +6,7 @@ function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
   } else {
-    alert("Geolocation is not supported by this browser.");
+    alert("此瀏覽器不支持地理位置服務。");
   }
 }
 
