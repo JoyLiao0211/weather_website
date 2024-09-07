@@ -68,3 +68,24 @@ document.getElementById('overlayOpacity').addEventListener('input', function (ev
     overlay.setOpacity(opacityValue); // Adjust the opacity of the overlay
   }
 });
+
+function searchAddress() {
+  const address = document.getElementById('addressInput').value;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        displayMap(lat, lon);
+        displayWeatherOverlay(lat, lon);
+      } else {
+        alert('無法找到地址');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('搜尋地址時出錯');
+    });
+}
