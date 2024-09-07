@@ -21,7 +21,7 @@ function showPosition(position) {
 function displayMap(lat, lon) {
   if (!map) {
     // If map does not exist, create it
-    map = L.map('map').setView([lat, lon], 11);
+    map = L.map('map').setView([lat, lon], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
