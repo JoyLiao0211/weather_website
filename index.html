@@ -15,12 +15,24 @@
 </head>
 <body>
 
-  <h1>Weather Map</h1>
-  <button onclick="getLocation()">Show My Location and Weather</button>
-  <div id="map"></div>
+    <h1>Weather Map</h1>
+    <button onclick="getLocation()">Show My Location and Weather</button>
 
-  <!-- Link to the external JavaScript file -->
-  <script src="script.js"></script>
+    <!-- Checkbox to toggle radar overlay -->
+    <label for="toggleOverlay">Show Radar Overlay</label>
+    <input type="checkbox" id="toggleOverlay" checked>
+
+    <!-- Slider to control radar overlay opacity -->
+    <label for="overlayOpacity">Overlay Opacity</label>
+    <input type="range" id="overlayOpacity" min="0" max="100" value="80">
+
+    <!-- The map container -->
+    <div id="map" style="height: 600px;"></div>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="script.js"></script>
 
 </body>
+  
+  
 </html>
