@@ -73,8 +73,9 @@ function clearGrid() {
 function drawGrid(data) {
   var gridSizeLat = (data.Y[1][0] - data.Y[0][0]);  // Latitude grid size
   var gridSizeLng = (data.X[0][1] - data.X[0][0]);  // Longitude grid size
-
+  //console.log("test")
   for (var i = 0; i < 441; i++) {
+    //console.log(i)
     for (var j = 0; j < 561; j++) {
       var bounds = [
         [data.Y[j][i], data.X[j][i]],  // Top-left coordinate
@@ -97,14 +98,15 @@ function drawGrid(data) {
 
 // Fetch rainfall data from the backend and update the grid
 function updateGrid() {
+  //console.log("start")
   fetch('/rainfall_data')
     .then(response => response.json())
     .then(data => {
       clearGrid();  // Clear current grid
       drawGrid(data);  // Draw new grid
 
-      var timestampDiv = document.getElementById('timestamp');
-      timestampDiv.innerText = 'Data Time: ' + data.Datetime;
+      //var timestampDiv = document.getElementById('timestamp');
+      //timestampDiv.innerText = 'Data Time: ' + data.Datetime;
     });
 }
 
@@ -130,7 +132,17 @@ function clearOverlay() {
 }
 
 window.onload = function() {
-  getLocation();
+  getLocation(); // Call your function to get the user's location
+
+  // Trigger the 'change' event on the radarSelector element to initialize the default state
+  var radarSelector = document.getElementById('radarSelector');
+  var changeEvent = new Event('change');
+  radarSelector.dispatchEvent(changeEvent);
+
+  // Optionally, trigger other events if needed, e.g., checkbox toggle or location selection
+  var toggleOverlayCheckbox = document.getElementById('toggleOverlay');
+  var checkboxEvent = new Event('change');
+  toggleOverlayCheckbox.dispatchEvent(checkboxEvent);
 };
 
 // 監聽選項變化，根據選擇來調用不同的功能
