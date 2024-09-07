@@ -1,0 +1,23 @@
+body {
+  padding: 0 20px; /* 左右各 20px 的邊界 */
+}
+
+body, h1, button {
+  font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
+  
+}
+
+#map {
+  aspect-ratio: 1.2;
+  width: 100%;
+  margin-top: 20px; /* 上方距離 */
+  margin-bottom: 20px; /* 下方距離 */
+  background-color: #e3e7e9; /* 淡灰色背景 */
+  border: 2px solid #5ab4c5; /* 邊框樣式可選 */
+  border-radius: 4px;
+}
+
+#weatherOverlayImage {
+    filter: blur(0px);
+    /* transition: all 0.3s ease; */
+  }

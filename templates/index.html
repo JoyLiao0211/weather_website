@@ -7,51 +7,40 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif; /* English and numbers */
-    }
-
-    body, h1, button {
-      font-family: 'PingFang SC', 'Roboto', sans-serif; /* For Chinese */
-    }
-
-    /* Add fallback font for systems that don't have PingFang SC */
-    body {
-      font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
-    }
-    #map {
-      height: 600px;
-      width: 100%;
-    }
-
-    #controls {
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-  <h1><center>降雨報報</center></h1>
+  <h2><center>降雨報報</center></h2>
 
-  <button onclick="getLocation()">顯示所在地的降雨預報</button><br>
-
-  <!-- Address input for searching a specific location -->
-  <input type="text" id="addressInput" placeholder="輸入地址">
-  <button onclick="searchAddress()">搜尋地址</button>
+  <p>顯示 
+    <input type="radio" id="currentLocation" name="locationOption" value="current" checked>
+    <label for="currentLocation">所在地</label>
+    
+    <input type="radio" id="customLocation" name="locationOption" value="custom">
+    <label for="customLocation">自選地點</label>
+    
+    的降雨預報
+  </p>
+  
+  <!-- "輸入地址" 和 "搜尋"按鈕 initially hidden -->
+  <div id="customAddressSection" style="display: none;">
+    <input type="text" id="addressInput" placeholder="輸入地址">
+    <button onclick="searchAddress()">搜尋</button>
+  </div>
   <br>
 
   <!-- Dropdown to select radar overlay -->
   <label for="radarSelector">選擇雷達覆蓋圖：</label>
   <select id="radarSelector">
+    <option value="historical">降雨預測網格</option>
     <option value="shulin">樹林雷達</option>
     <option value="nantun">南屯雷達</option>
     <option value="combined">整合雷達圖</option>
-    <option value="historical">歷史降雨網格</option> <!-- Added historical grid option -->
   </select>
 
   <br>
-
+  
   <!-- The map container -->
   <div id="map"></div>
 
@@ -61,7 +50,7 @@
     <label for="toggleOverlay">顯示雷達覆蓋圖</label>
 
     <!-- Slider to control radar overlay opacity -->
-    <input type="range" id="overlayOpacity" min="0" max="100" value="80">
+    <input type="range" id="overlayOpacity" min="0" max="100" value="80" style="width: 110px;">
     <label for="overlayOpacity">不透明度</label>
   </div>
 

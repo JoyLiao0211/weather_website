@@ -1,3 +1,6 @@
+const mapZoom = 12;
+var marker;
+
 // Initialize the map
 var map = L.map('map').setView([25.1, 121.6], 11);
 
@@ -126,6 +129,21 @@ function clearOverlay() {
   }
 }
 
+window.onload = function() {
+  getLocation();
+};
+
+// 監聽選項變化，根據選擇來調用不同的功能
+document.getElementById('currentLocation').addEventListener('change', function() {
+  document.getElementById('customAddressSection').style.display = 'none'; // 隱藏地址輸入欄
+  getLocation(); // 選擇「所在地」時自動調用getLocation()
+});
+
+document.getElementById('customLocation').addEventListener('change', function() {
+  document.getElementById('customAddressSection').style.display = 'block'; // 顯示地址輸入欄
+});
+
+
 // Handle grid and radar toggle
 document.getElementById('radarSelector').addEventListener('change', function() {
   const selectedOption = document.getElementById('radarSelector').value;
@@ -173,7 +191,7 @@ function searchAddress() {
       if (data.length > 0) {
         const { lat, lon } = data[0];
         clearOverlay();  // Clear radar
-        displayMap(lat, lon);
+        displayMap(lat, lon, mapZoom);
         displayWeatherOverlay();  // Add radar overlay
       } else {
         alert('無法找到地址');
@@ -197,18 +215,28 @@ function getLocation() {
 function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  displayMap(latitude, longitude);
+  displayMap(latitude, longitude, mapZoom);
   displayWeatherOverlay();
 }
 
-function displayMap(lat, lon) {
+function displayMap(lat, lon, zoomLevel) {
   if (!map) {
-    map = L.map('map').setView([lat, lon], 11);
+    map = L.map('map').setView([lat, lon], zoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    // 添加或更新標記
+    marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
   } else {
-    map.setView([lat, lon], 11);
+    map.setView([lat, lon], zoomLevel);
+
+    // 如果地圖已經存在，更新標記
+    if (marker) {
+      marker.setLatLng([lat, lon]);
+    } else {
+      marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
+    }
   }
 }

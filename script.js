@@ -1,6 +1,7 @@
 let map;
 let marker; // 定義 marker 變數
 let overlay;
+const mapZoom = 13;
 const earthRadiusKm = 6371; // Earth's radius in kilometers
 
 function getLocation() {
@@ -14,21 +15,22 @@ function getLocation() {
 function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  displayMap(latitude, longitude);
+  displayMap(latitude, longitude, mapZoom);
   displayWeatherOverlay(latitude, longitude);
 }
 
-function displayMap(lat, lon) {
+function displayMap(lat, lon, zoomLevel) {
+
   if (!map) {
     // If map does not exist, create it
-    map = L.map('map').setView([lat, lon], 11);
+    map = L.map('map').setView([lat, lon], zoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
   } else {
     // If map exists, just update the view
-    map.setView([lat, lon], 11);
+    map.setView([lat, lon], zoomLevel);
   }
 
   // Add or update the marker
@@ -58,6 +60,22 @@ function displayWeatherOverlay(lat, lon) {
   } else {
     overlay = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.8 }).addTo(map);
   }
+
+  const overlayImage = overlay.getElement();
+  if (overlayImage) {
+    overlayImage.id = 'weatherOverlayImage'; // Assign an ID
+  }
+
+  map.on('zoom', function() {
+    const zoomLevel = map.getZoom();
+    console.log(zoomLevel);
+    // const blurAmount = 0;
+    const blurAmount = Math.max(0,  zoomLevel*1.2-12); // Adjust this formula as needed
+    console.log(blurAmount);
+    if (overlayImage) {
+      overlayImage.style.filter = `blur(${blurAmount}px)`; // Adjust blur dynamically
+    }
+  });
 }
 
 function clearOverlay() {
@@ -77,7 +95,7 @@ function searchAddress() {
       if (data.length > 0) {
         const { lat, lon } = data[0];
         clearOverlay(); // Remove old overlay
-        displayMap(lat, lon);
+        displayMap(lat, lon, mapZoom);
         displayWeatherOverlay(lat, lon);
       } else {
         alert('無法找到地址');
@@ -88,6 +106,10 @@ function searchAddress() {
       alert('搜尋地址時出錯: ' + error.message);
     });
 }
+
+window.onload = function() {
+  getLocation();
+};
 
 document.getElementById('toggleOverlay').addEventListener('change', function (event) {
   if (event.target.checked) {
@@ -102,4 +124,14 @@ document.getElementById('overlayOpacity').addEventListener('input', function (ev
   if (overlay) {
     overlay.setOpacity(opacityValue); // Adjust the opacity of the overlay
   }
+});
+
+/// 監聽選項變化，根據選擇來調用不同的功能
+document.getElementById('currentLocation').addEventListener('change', function() {
+  document.getElementById('customAddressSection').style.display = 'none'; // 隱藏地址輸入欄
+  getLocation(); // 選擇「所在地」時自動調用getLocation()
+});
+
+document.getElementById('customLocation').addEventListener('change', function() {
+  document.getElementById('customAddressSection').style.display = 'block'; // 顯示地址輸入欄
 });
