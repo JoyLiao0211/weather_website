@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Map</title>
+  <title>降雨報報</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
+    body {
+      font-family: 'Roboto', sans-serif; /* English and numbers */
+    }
+
+    body, h1, button {
+      font-family: 'PingFang SC', 'Roboto', sans-serif; /* For Chinese */
+    }
+
+    /* Add fallback font for systems that don't have PingFang SC */
+    body {
+      font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
+    }
+
     #map {
       height: 500px;
       width: 100%;
@@ -15,8 +28,8 @@
 </head>
 <body>
 
-  <h1>Weather Map</h1>
-  <button onclick="getLocation()">Show My Location and Weather</button>
+  <h1>降雨報報</h1>
+  <button onclick="getLocation()">顯示我所在位置的降雨機率</button>
   <div id="map"></div>
 
   <script>
@@ -26,7 +39,7 @@
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
       } else {
-        alert("Geolocation is not supported by this browser.");
+        alert("此瀏覽器不支持地理位置服務。");
       }
     }
 
@@ -38,28 +51,28 @@
     }
 
     function displayMap(lat, lon) {
-      map = L.map('map').setView([lat, lon], 13); // Set the map view to user's location
+      map = L.map('map').setView([lat, lon], 13); // 設定地圖視角為使用者位置
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap 參與者'
       }).addTo(map);
 
-      L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
+      L.marker([lat, lon]).addTo(map).bindPopup("您在這裡").openPopup();
     }
 
     function displayWeatherImage(lat, lon) {
       let imageUrl;
 
-      // Simple logic to determine weather image based on lat/lon
+      // 根據 lat/lon 簡單邏輯決定天氣圖片
       if (lat >= 25 && lat <= 26 && lon >= 121 && lon <= 122) {
-        imageUrl = 'path/to/taipei-weather.jpg'; // Example region: Taipei
+        imageUrl = 'path/to/taipei-weather.jpg'; // 例子區域：台北
       } else if (lat >= 24 && lat <= 25 && lon >= 120 && lon <= 121) {
-        imageUrl = 'path/to/taichung-weather.jpg'; // Example region: Taichung
+        imageUrl = 'path/to/taichung-weather.jpg'; // 例子區域：台中
       } else {
-        imageUrl = 'path/to/default-weather.jpg'; // Default image for other locations
+        imageUrl = 'path/to/default-weather.jpg'; // 其他位置的預設圖片
       }
 
-      // Display weather image on the map as an overlay
+      // 在地圖上顯示天氣圖片作為覆蓋層
       L.imageOverlay(imageUrl, [[lat - 0.1, lon - 0.1], [lat + 0.1, lon + 0.1]]).addTo(map);
     }
   </script>
