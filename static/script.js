@@ -14,7 +14,7 @@ var rectangles = [];
 var overlay = null;
 
 // Color and grid settings for rainfall
-var colorlevel = [0, 1, 2, 6, 10, 15, 20, 30, 40, 50, 70, 90, 110, 130, 150, 200, 300, 400];
+var colorlevel = [0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 70, 100, 150, 200, 300];
 var cwb_data = ['None', '#9BFFFF', '#00CFFF', '#0198FF', '#0165FF', '#309901', '#32FF00', '#F8FF00', '#FFCB00', '#FF9A00', '#FA0300', '#CC0003', '#A00000', '#98009A', '#C304CC', '#F805F3', '#FECBFF'];
 
 
@@ -96,6 +96,41 @@ function drawGrid(data) {
   }
 }
 
+function createColorBar() {
+  const colorBar = document.getElementById('colorBar');
+  const totalLevels = colorlevel.length;
+
+  colorBar.innerHTML = '';  // Clear previous content
+  for (let i = totalLevels - 1; i >= 0; i--) {
+    const colorSegment = document.createElement('div');
+    colorSegment.style.backgroundColor = cwb_data[i];
+    colorSegment.style.height = `${450 / (totalLevels+1)}px`;
+    colorSegment.style.width = '100%';
+    colorSegment.style.borderTop = '1px solid black';
+
+    const label = document.createElement('span');
+    label.style.fontSize = '10px';
+    label.style.color = 'black';
+    label.style.position = 'absolute';
+    label.style.marginTop = `${450 / (totalLevels+1)-15}px`;  // Adjust based on segment height
+    label.innerText = `${colorlevel[i]} mm`;
+
+    colorSegment.appendChild(label);
+    colorBar.appendChild(colorSegment);
+  }
+}
+
+function toggleColorBar(shouldShow) {
+  const colorBar = document.getElementById('colorBar');
+  if (shouldShow) {
+    colorBar.style.display = 'block';
+    createColorBar();  // Create the color bar only if visible
+  } else {
+    colorBar.style.display = 'none';
+  }
+}
+
+
 // Fetch rainfall data from the backend and update the grid
 function updateGrid() {
   //console.log("start")
@@ -109,6 +144,20 @@ function updateGrid() {
       //timestampDiv.innerText = 'Data Time: ' + data.Datetime;
     });
 }
+
+document.getElementById('radarSelector').addEventListener('change', function() {
+  const selectedOption = document.getElementById('radarSelector').value;
+
+  if (selectedOption === "historical") {
+    clearOverlay();  // Clear radar if it's active
+    updateGrid();    // Display the historical rainfall grid
+    toggleColorBar(true);  // Show the color bar
+  } else {
+    clearGrid();     // Clear the rainfall grid
+    displayWeatherOverlay();  // Add radar overlay
+    toggleColorBar(false);  // Hide the color bar
+  }
+});
 
 // Function to display radar overlay
 function displayWeatherOverlay() {

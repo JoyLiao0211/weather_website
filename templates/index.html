@@ -42,7 +42,10 @@
   <br>
   
   <!-- The map container -->
-  <div id="map"></div>
+  <div id="map" style="position: relative; width: 100%; height: 600px;">
+    <div id="colorBar" style="position: absolute; top: 10px; right: 10px; height: 442px; width: 50px; border: 1px solid black; background-color: white; z-index: 1000; display: none; pointer-events: none;">
+    </div>
+  </div>
 
   <div id="controls">
     <!-- Checkbox to toggle radar overlay -->
