@@ -11,17 +11,28 @@
 </head>
 <body>
 
-    <h1><center>降雨報報</center></h1>
+    <h2><center>降雨報報</center></h2>
 
 
-    <button onclick="getLocation()">顯示所在地的降雨預報</button><br>
-    <input type="text" id="addressInput" placeholder="輸入地址">
-    <button onclick="searchAddress()">搜尋地址</button>
-
-    <br>
+    <p>顯示 
+      <input type="radio" id="currentLocation" name="locationOption" value="current" checked>
+      <label for="currentLocation">所在地</label>
+      
+      <input type="radio" id="customLocation" name="locationOption" value="custom">
+      <label for="customLocation">自選地點</label>
+      
+      的降雨預報
+    </p>
+    
+    <!-- "輸入地址" 和 "搜尋"按鈕 initially hidden -->
+    <div id="customAddressSection" style="display: none;">
+      <input type="text" id="addressInput" placeholder="輸入地址">
+      <button onclick="searchAddress()">搜尋</button>
+    </div>
 
     <!-- The map container -->
-    <div id="map" style="height: 600px;"></div>
+    <div id="map"></div>
+    <!-- Map preload hint -->
     
     <!-- Checkbox to toggle radar overlay -->
     <input type="checkbox" id="toggleOverlay" checked>

@@ -1,18 +1,16 @@
-body {
-font-family: 'Roboto', sans-serif; /* English and numbers */
-}
-
 body, h1, button {
-font-family: 'PingFang SC', 'Roboto', sans-serif; /* For Chinese */
+  font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
 }
 
-/* Add fallback font for systems that don't have PingFang SC */
-body {
-font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
-}
+
 #map {
-height: 500px;
-width: 100%;
+  aspect-ratio: 1.2;
+  width: 100%;
+  margin-top: 20px; /* 上方距離 */
+  margin-bottom: 20px; /* 下方距離 */
+  background-color: #e3e7e9; /* 淡灰色背景 */
+  border: 2px solid #5ab4c5; /* 邊框樣式可選 */
+  border-radius: 4px;
 }
 
 #weatherOverlayImage {
