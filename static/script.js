@@ -261,25 +261,38 @@ function showPosition(position) {
   displayMap(latitude, longitude, mapZoom);
   displayWeatherOverlay();
 }
+// Create a custom icon
+var customIcon = L.icon({
+  iconUrl: './static/marker_icon.svg', // Replace with your custom icon URL
+  iconSize: [38, 38], // Size of the icon [width, height]
+  iconAnchor: [22, 38], // Point of the icon that will correspond to the marker's location
+  popupAnchor: [-3, -38], // Point from which the popup should open relative to the iconAnchor
+  // shadowUrl: 'path_to_your_icon_shadow.png', // Optional: Add a shadow if needed
+  // shadowSize: [50, 64],  // Optional: Size of the shadow
+  // shadowAnchor: [22, 64] // Optional: Anchor for the shadow
+});
 
+// Use the custom icon in the marker
 function displayMap(lat, lon, zoomLevel) {
-  if (!map) {
-    map = L.map('map').setView([lat, lon], zoomLevel);
+if (!map) {
+  map = L.map('map').setView([lat, lon], zoomLevel);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-    // 添加或更新標記
-    marker = L.marker([lat, lon]).addTo(map);
+  // Add or update marker with custom icon
+  marker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
+} else {
+  map.setView([lat, lon], zoomLevel);
+
+  // If map already exists, update the marker with custom icon
+  if (marker) {
+    marker.setLatLng([lat, lon]);
+    marker.setIcon(customIcon);  // Update marker to use custom icon
   } else {
-    map.setView([lat, lon], zoomLevel);
-
-    // 如果地圖已經存在，更新標記
-    if (marker) {
-      marker.setLatLng([lat, lon]);
-    } else {
-      marker = L.marker([lat, lon]).addTo(map);
-    }
+    marker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
   }
 }
+}
+
