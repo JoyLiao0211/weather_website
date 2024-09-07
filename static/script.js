@@ -1,6 +1,6 @@
 const mapZoom = 12;
+const earthRadiusKm = 6371;
 var marker;
-const earthRadiusKm = 6371; // Earth's radius in kilometers
 
 // Initialize the map
 var map = L.map('map').setView([25.1, 121.6], 11);
@@ -240,7 +240,7 @@ function displayMap(lat, lon, zoomLevel) {
     }).addTo(map);
 
     // 添加或更新標記
-    marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
+    marker = L.marker([lat, lon]).addTo(map);
   } else {
     map.setView([lat, lon], zoomLevel);
 
@@ -248,7 +248,7 @@ function displayMap(lat, lon, zoomLevel) {
     if (marker) {
       marker.setLatLng([lat, lon]);
     } else {
-      marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
+      marker = L.marker([lat, lon]).addTo(map);
     }
   }
 }
