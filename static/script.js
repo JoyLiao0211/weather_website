@@ -36,7 +36,7 @@ const radarData = {
   },
   combined: {
     imageUrl: "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png",
-    imageBounds: [[20.5, 118.0], [26.5, 124.0]] // Static bounds for the combined radar
+    imageBounds: [[20.48, 118.01], [26.48, 124.0]] // Static bounds for the combined radar
   }
 };
 
