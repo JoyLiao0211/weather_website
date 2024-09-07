@@ -152,7 +152,7 @@ document.getElementById('currentLocation').addEventListener('change', function()
 });
 
 document.getElementById('customLocation').addEventListener('change', function() {
-  document.getElementById('customAddressSection').style.display = 'block'; // 顯示地址輸入欄
+  document.getElementById('customAddressSection').style.display = 'flex'; // joy: flex才能在同一排
 });
 
 

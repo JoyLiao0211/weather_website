@@ -13,25 +13,29 @@
 
   <h2><center>降雨報報</center></h2>
 
-  <p>顯示 
-    <input type="radio" id="currentLocation" name="locationOption" value="current" checked>
-    <label for="currentLocation">所在地</label>
-    
-    <input type="radio" id="customLocation" name="locationOption" value="custom">
-    <label for="customLocation">自選地點</label>
-    
-    的降雨預報
-  </p>
+  <div style="display:block; margin:10px 0px;"> 
+    <p style="margin-bottom: 0px;">顯示降雨預報的地點</p>
+    <div class="radio-button-group">
+      <input type="radio" id="currentLocation" name="locationOption" value="current" checked>
+      <label for="currentLocation">所在地點</label>
+
+      <input type="radio" id="customLocation" name="locationOption" value="custom">
+      <label for="customLocation">自選地點</label>
+    </div>
+  </div>
+
   
   <!-- "輸入地址" 和 "搜尋"按鈕 initially hidden -->
   <div id="customAddressSection" style="display: none;">
     <input type="text" id="addressInput" placeholder="輸入地址">
-    <button onclick="searchAddress()">搜尋</button>
+    <button onclick="searchAddress()">
+      <img src="{{ url_for('static', filename='search_icon.png') }}" alt="搜尋" class="button-image">
+    </button>
   </div>
   <br>
 
   <!-- Dropdown to select radar overlay -->
-  <label for="radarSelector">選擇雷達覆蓋圖：</label>
+  <label for="radarSelector">選擇資料圖：</label>
   <select id="radarSelector">
     <option value="historical">降雨預測網格</option>
     <option value="shulin">樹林雷達</option>
@@ -45,9 +49,6 @@
   <div id="map"></div>
 
   <div id="controls">
-    <!-- Checkbox to toggle radar overlay -->
-    <input type="checkbox" id="toggleOverlay" checked>
-    <label for="toggleOverlay">顯示雷達覆蓋圖</label>
 
     <!-- Slider to control radar overlay opacity -->
     <input type="range" id="overlayOpacity" min="0" max="100" value="80" style="width: 110px;">
