@@ -1,5 +1,6 @@
 const mapZoom = 12;
 var marker;
+const earthRadiusKm = 6371; // Earth's radius in kilometers
 
 // Initialize the map
 var map = L.map('map').setView([25.1, 121.6], 11);
@@ -16,7 +17,6 @@ var overlay = null;
 var colorlevel = [0, 1, 2, 6, 10, 15, 20, 30, 40, 50, 70, 90, 110, 130, 150, 200, 300, 400];
 var cwb_data = ['None', '#9BFFFF', '#00CFFF', '#0198FF', '#0165FF', '#309901', '#32FF00', '#F8FF00', '#FFCB00', '#FF9A00', '#FA0300', '#CC0003', '#A00000', '#98009A', '#C304CC', '#F805F3', '#FECBFF'];
 
-var earthRadiusKm = 6371; // Earth's radius in kilometers
 
 // Radar data for different locations
 const radarData = {
