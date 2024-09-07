@@ -152,10 +152,12 @@ document.getElementById('radarSelector').addEventListener('change', function() {
     clearOverlay();  // Clear radar if it's active
     updateGrid();    // Display the historical rainfall grid
     toggleColorBar(true);  // Show the color bar
+    opacityControl.style.display = 'none';
   } else {
     clearGrid();     // Clear the rainfall grid
     displayWeatherOverlay();  // Add radar overlay
     toggleColorBar(false);  // Hide the color bar
+    opacityControl.style.display = 'block';
   }
 });
 
