@@ -1,4 +1,5 @@
 const mapZoom = 12;
+const earthRadiusKm = 6371;
 var marker;
 
 // Initialize the map
@@ -13,10 +14,9 @@ var rectangles = [];
 var overlay = null;
 
 // Color and grid settings for rainfall
-var colorlevel = [0, 1, 2, 6, 10, 15, 20, 30, 40, 50, 70, 90, 110, 130, 150, 200, 300, 400];
+var colorlevel = [0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 70, 100, 150, 200, 300];
 var cwb_data = ['None', '#9BFFFF', '#00CFFF', '#0198FF', '#0165FF', '#309901', '#32FF00', '#F8FF00', '#FFCB00', '#FF9A00', '#FA0300', '#CC0003', '#A00000', '#98009A', '#C304CC', '#F805F3', '#FECBFF'];
 
-var earthRadiusKm = 6371; // Earth's radius in kilometers
 
 // Radar data for different locations
 const radarData = {
@@ -96,6 +96,41 @@ function drawGrid(data) {
   }
 }
 
+function createColorBar() {
+  const colorBar = document.getElementById('colorBar');
+  const totalLevels = colorlevel.length;
+
+  colorBar.innerHTML = '';  // Clear previous content
+  for (let i = totalLevels - 1; i >= 0; i--) {
+    const colorSegment = document.createElement('div');
+    colorSegment.style.backgroundColor = cwb_data[i];
+    colorSegment.style.height = `${450 / (totalLevels+1)}px`;
+    colorSegment.style.width = '100%';
+    colorSegment.style.borderTop = '1px solid black';
+
+    const label = document.createElement('span');
+    label.style.fontSize = '10px';
+    label.style.color = 'black';
+    label.style.position = 'absolute';
+    label.style.marginTop = `${450 / (totalLevels+1)-15}px`;  // Adjust based on segment height
+    label.innerText = `${colorlevel[i]} mm`;
+
+    colorSegment.appendChild(label);
+    colorBar.appendChild(colorSegment);
+  }
+}
+
+function toggleColorBar(shouldShow) {
+  const colorBar = document.getElementById('colorBar');
+  if (shouldShow) {
+    colorBar.style.display = 'block';
+    createColorBar();  // Create the color bar only if visible
+  } else {
+    colorBar.style.display = 'none';
+  }
+}
+
+
 // Fetch rainfall data from the backend and update the grid
 function updateGrid() {
   //console.log("start")
@@ -109,6 +144,22 @@ function updateGrid() {
       //timestampDiv.innerText = 'Data Time: ' + data.Datetime;
     });
 }
+
+document.getElementById('radarSelector').addEventListener('change', function() {
+  const selectedOption = document.getElementById('radarSelector').value;
+
+  if (selectedOption === "historical") {
+    clearOverlay();  // Clear radar if it's active
+    updateGrid();    // Display the historical rainfall grid
+    toggleColorBar(true);  // Show the color bar
+    opacityControl.style.display = 'none';
+  } else {
+    clearGrid();     // Clear the rainfall grid
+    displayWeatherOverlay();  // Add radar overlay
+    toggleColorBar(false);  // Hide the color bar
+    opacityControl.style.display = 'block';
+  }
+});
 
 // Function to display radar overlay
 function displayWeatherOverlay() {
@@ -138,11 +189,6 @@ window.onload = function() {
   var radarSelector = document.getElementById('radarSelector');
   var changeEvent = new Event('change');
   radarSelector.dispatchEvent(changeEvent);
-
-  // Optionally, trigger other events if needed, e.g., checkbox toggle or location selection
-  var toggleOverlayCheckbox = document.getElementById('toggleOverlay');
-  var checkboxEvent = new Event('change');
-  toggleOverlayCheckbox.dispatchEvent(checkboxEvent);
 };
 
 // 監聽選項變化，根據選擇來調用不同的功能
@@ -165,22 +211,7 @@ document.getElementById('radarSelector').addEventListener('change', function() {
     updateGrid();  // Display the historical rainfall grid
   } else {
     clearGrid();  // Clear rainfall grid
-    displayWeatherOverlay();  // Add radar overlay
-  }
-});
-
-// Handle checkbox to toggle radar or grid visibility
-document.getElementById('toggleOverlay').addEventListener('change', function (event) {
-  if (event.target.checked) {
-    const selectedOption = document.getElementById('radarSelector').value;
-    if (selectedOption === "historical") {
-      updateGrid();  // Show historical grid
-    } else {
-      displayWeatherOverlay();  // Show radar
-    }
-  } else {
-    clearOverlay();  // Hide radar
-    clearGrid();  // Hide rainfall grid
+    displayWeatherOverlay();
   }
 });
 
@@ -240,7 +271,7 @@ function displayMap(lat, lon, zoomLevel) {
     }).addTo(map);
 
     // 添加或更新標記
-    marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
+    marker = L.marker([lat, lon]).addTo(map);
   } else {
     map.setView([lat, lon], zoomLevel);
 
@@ -248,7 +279,7 @@ function displayMap(lat, lon, zoomLevel) {
     if (marker) {
       marker.setLatLng([lat, lon]);
     } else {
-      marker = L.marker([lat, lon]).addTo(map).bindPopup("你在這裡").openPopup();
+      marker = L.marker([lat, lon]).addTo(map);
     }
   }
 }

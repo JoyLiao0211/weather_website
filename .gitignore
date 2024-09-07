@@ -1,3 +1,4 @@
 api.json
 .venv
 *.json
+*.sh
