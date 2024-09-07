@@ -1,0 +1,22 @@
+body {
+font-family: 'Roboto', sans-serif; /* English and numbers */
+}
+
+body, h1, button {
+font-family: 'PingFang SC', 'Roboto', sans-serif; /* For Chinese */
+}
+
+/* Add fallback font for systems that don't have PingFang SC */
+body {
+font-family: 'PingFang SC', 'Roboto', 'Microsoft YaHei', 'Helvetica', sans-serif;
+}
+#map {
+height: 500px;
+width: 100%;
+}
+
+#weatherOverlayImage {
+    filter: blur(0px);
+    /* transition: all 0.3s ease; */
+  }
+  

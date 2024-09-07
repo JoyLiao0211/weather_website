@@ -14,21 +14,22 @@ function getLocation() {
 function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  displayMap(latitude, longitude);
+  displayMap(latitude, longitude, 10);
   displayWeatherOverlay(latitude, longitude);
 }
 
-function displayMap(lat, lon) {
+function displayMap(lat, lon, zoomLevel) {
+
   if (!map) {
     // If map does not exist, create it
-    map = L.map('map').setView([lat, lon], 11);
+    map = L.map('map').setView([lat, lon], zoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
   } else {
     // If map exists, just update the view
-    map.setView([lat, lon], 11);
+    map.setView([lat, lon], zoomLevel);
   }
 
   // Add or update the marker
@@ -58,6 +59,22 @@ function displayWeatherOverlay(lat, lon) {
   } else {
     overlay = L.imageOverlay(imageUrl, imageBounds, { opacity: 0.8 }).addTo(map);
   }
+
+  const overlayImage = overlay.getElement();
+  if (overlayImage) {
+    overlayImage.id = 'weatherOverlayImage'; // Assign an ID
+  }
+
+  map.on('zoom', function() {
+    const zoomLevel = map.getZoom();
+    console.log(zoomLevel);
+    // const blurAmount = 0;
+    const blurAmount = Math.max(0,  zoomLevel*1.2-12); // Adjust this formula as needed
+    console.log(blurAmount);
+    if (overlayImage) {
+      overlayImage.style.filter = `blur(${blurAmount}px)`; // Adjust blur dynamically
+    }
+  });
 }
 
 function clearOverlay() {
@@ -77,7 +94,7 @@ function searchAddress() {
       if (data.length > 0) {
         const { lat, lon } = data[0];
         clearOverlay(); // Remove old overlay
-        displayMap(lat, lon);
+        displayMap(lat, lon, 10);
         displayWeatherOverlay(lat, lon);
       } else {
         alert('無法找到地址');
