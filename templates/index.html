@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainfall Grid Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([24, 121], 8);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // 定義顏色等級與對應顏色
+        var colorlevel = [0,1,2,6,10,15,20,30,40,50,70,90,110,130,150,200,300,400];
+        var cwb_data = ['None','#9BFFFF','#00CFFF','#0198FF','#0165FF','#309901','#32FF00','#F8FF00','#FFCB00','#FF9A00','#FA0300','#CC0003','#A00000','#98009A','#C304CC','#F805F3','#FECBFF'];
+
+        var rectangles = [];
+
+        // 根據雨量值找到對應的顏色
+        function getColorForRainfall(value) {
+            for (var i = 0; i < colorlevel.length; i++) {
+                if (value < colorlevel[i]) {
+                    return cwb_data[i];
+                }
+            }
+            return cwb_data[cwb_data.length - 1];  // 超過最大值時用最後一個顏色
+        }
+
+        // 清除現有網格
+        function clearGrid() {
+            rectangles.forEach(function(rect) {
+                map.removeLayer(rect);
+            });
+            rectangles = [];
+        }
+
+        // 繪製網格
+        function drawGrid(data) {
+            var gridSizeLat = (data.Y[1][0] - data.Y[0][0]);  // 計算緯度格子大小
+            var gridSizeLng = (data.X[0][1] - data.X[0][0]);  // 計算經度格子大小
+
+            for (var i = 0; i < data.X.length; i++) {
+                for (var j = 0; j < data.Y.length; j++) {
+                    var bounds = [
+                        [data.Y[j][i], data.X[j][i]],  // 左上角座標
+                        [data.Y[j][i] + gridSizeLat, data.X[j][i] + gridSizeLng]  // 右下角座標
+                    ];
+
+                    // 根據雨量值設置顏色
+                    var color = getColorForRainfall(data.Z[j][i]);
+
+                    // 創建矩形並添加到地圖
+                    if (color !== 'None') {
+                        var rect = L.rectangle(bounds, { 
+                            color: color, 
+                            weight: 0,            // 沒有邊框
+                            fillOpacity: 0.5      // 設置填充不透明度
+                        }).addTo(map);
+
+                        rectangles.push(rect);  // 保存矩形以便後續清除
+                    }
+                }
+            }
+        }
+
+        // 從後端獲取數據並更新網格
+        function updateGrid() {
+            fetch('/rainfall_data')
+                .then(response => response.json())
+                .then(data => {
+                    clearGrid();  // 先清除現有網格
+                    drawGrid(data);  // 繪製新網格
+                });
+        }
+
+        // 首次加載地圖
+        updateGrid();
+
+        // 每隔 10 秒更新一次數據
+        setInterval(updateGrid, 300000);  // 10000 毫秒即 10 秒
+    </script>
+</body>
+</html>
