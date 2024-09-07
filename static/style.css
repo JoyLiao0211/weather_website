@@ -8,6 +8,7 @@ body, h1, button {
 }
 
 #map {
+  position: relative;
   aspect-ratio: 1.2;
   width: 100%;
   margin-top: 20px; /* 上方距離 */
