@@ -11,9 +11,8 @@ function getLocation() {
 function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  console.log
   displayMap(latitude, longitude);
-  displayWeatherOverlay(latitude, longitude); // Add the weather overlay after displaying the map
+  fetchOverlayData(); // Fetch overlay data from the JSON
 }
 
 function displayMap(lat, lon) {
@@ -26,26 +25,26 @@ function displayMap(lat, lon) {
   L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
 }
 
-// Function to overlay the weather image based on the user's location
-function displayWeatherOverlay() {
-    const imageUrl = 'https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png'; // The radar image URL
-  
-    const stationLat = 25.00; // Station latitude
-    const stationLon = 121.40; // Station longitude
-  
-    const radiusKm = 150; // 150 kilometers as the range of the radar
-    
-    // Convert the radius to degrees (approximation)
-    const latDiff = radiusKm / 111; // Approximate conversion from km to degrees latitude (1 degree ≈ 111 km)
-    const lonDiff = radiusKm / (111 * Math.cos(stationLat * Math.PI / 180)); // Adjust for longitude using latitude
-  
-    // Define the bounds of the image overlay (Southwest and Northeast corners)
-    const imageBounds = [
-      [stationLat - latDiff, stationLon - lonDiff], // Southwest corner
-      [stationLat + latDiff, stationLon + lonDiff]  // Northeast corner
-    ];
-  
-    // Overlay the radar image on the map with opacity
-    L.imageOverlay(imageUrl, imageBounds, { opacity: 1 }).addTo(map);
-  }
-  
+// Function to fetch the overlay data from the JSON
+function fetchOverlayData() {
+  fetch("https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0084-001?Authorization=CWA-EAC5F54B-AD17-4E60-8715-38C2490AED66&downloadType=WEB&format=JSON") // Replace with the actual path to your JSON file
+    .then(response => response.json())
+    .then(data => {
+      const overlayData = data.cwaopendata.dataset;
+      const imageUrl = overlayData.resource.ProductURL;
+      const lat = parseFloat(overlayData.datasetInfo.parameterSet.StationLatitude);
+      const lon = parseFloat(overlayData.datasetInfo.parameterSet.StationLongitude);
+      
+      // Use the fetched data to display the overlay
+      displayWeatherOverlay(lat, lon, imageUrl);
+    })
+    .catch(error => console.error('Error fetching the overlay data:', error));
+}
+
+// Function to overlay the weather image based on the fetched data
+function displayWeatherOverlay(lat, lon, imageUrl) {
+  const imageBounds = [[lat - 0.75, lon - 0.75], [lat + 0.75, lon + 0.75]]; // Adjust bounds based on the image size
+
+  // Overlay the weather image on top of the map
+  L.imageOverlay(imageUrl, imageBounds, { opacity: 0.5 }).addTo(map); // Set opacity to 0.5 (50% transparency)
+}
