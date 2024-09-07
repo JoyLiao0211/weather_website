@@ -138,11 +138,6 @@ window.onload = function() {
   var radarSelector = document.getElementById('radarSelector');
   var changeEvent = new Event('change');
   radarSelector.dispatchEvent(changeEvent);
-
-  // Optionally, trigger other events if needed, e.g., checkbox toggle or location selection
-  var toggleOverlayCheckbox = document.getElementById('toggleOverlay');
-  var checkboxEvent = new Event('change');
-  toggleOverlayCheckbox.dispatchEvent(checkboxEvent);
 };
 
 // 監聽選項變化，根據選擇來調用不同的功能
@@ -165,22 +160,7 @@ document.getElementById('radarSelector').addEventListener('change', function() {
     updateGrid();  // Display the historical rainfall grid
   } else {
     clearGrid();  // Clear rainfall grid
-    displayWeatherOverlay();  // Add radar overlay
-  }
-});
-
-// Handle checkbox to toggle radar or grid visibility
-document.getElementById('toggleOverlay').addEventListener('change', function (event) {
-  if (event.target.checked) {
-    const selectedOption = document.getElementById('radarSelector').value;
-    if (selectedOption === "historical") {
-      updateGrid();  // Show historical grid
-    } else {
-      displayWeatherOverlay();  // Show radar
-    }
-  } else {
-    clearOverlay();  // Hide radar
-    clearGrid();  // Hide rainfall grid
+    displayWeatherOverlay();
   }
 });
 
