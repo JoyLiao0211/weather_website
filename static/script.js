@@ -248,19 +248,16 @@ function searchAddress() {
 
 // Function to show current location
 function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition, defalutPosition);
-  } else {
-    alert("此瀏覽器不支持地理位置服務。");
-  }
+  const postInfo = JSON.stringify({name: 'location', data: null});
+  flutterObject.postMessage(postInfo);
+  flutterObject.addEventListener('message', (event) => 
+  {
+    const pos = JSON.parse(event.data);
+    displayMap(pos.data.latitude, pos.data.longitude, mapZoom);
+    displayWeatherOverlay();
+  });
 }
 
-function showPosition(position) {
-  const latitude = position.coords.latitude;
-  const longitude = position.coords.longitude;
-  displayMap(latitude, longitude, mapZoom);
-  displayWeatherOverlay();
-}
 // Create a custom icon
 var customIcon = L.icon({
   iconUrl: './static/marker_icon.svg', // Replace with your custom icon URL
@@ -271,14 +268,6 @@ var customIcon = L.icon({
   // shadowSize: [50, 64],  // Optional: Size of the shadow
   // shadowAnchor: [22, 64] // Optional: Anchor for the shadow
 });
-
-// Use the custom icon in the marker
-function defalutPosition(position) {
-  const latitude = 25.0217447;
-  const longitude = 121.5351689;
-  displayMap(latitude, longitude, mapZoom);
-  displayWeatherOverlay();
-}
 
 function displayMap(lat, lon, zoomLevel) {
 if (!map) {
