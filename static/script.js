@@ -104,7 +104,7 @@ function createColorBar() {
   for (let i = totalLevels - 1; i >= 0; i--) {
     const colorSegment = document.createElement('div');
     colorSegment.style.backgroundColor = cwb_data[i];
-    colorSegment.style.height = `${450 / (totalLevels+1)}px`;
+    colorSegment.style.height = `${300 / (totalLevels+1)}px`;
     colorSegment.style.width = '100%';
     colorSegment.style.borderTop = '1px solid black';
 
@@ -112,7 +112,7 @@ function createColorBar() {
     label.style.fontSize = '10px';
     label.style.color = 'black';
     label.style.position = 'absolute';
-    label.style.marginTop = `${450 / (totalLevels+1)-15}px`;  // Adjust based on segment height
+    label.style.marginTop = `${300 / (totalLevels+1)-15}px`;  // Adjust based on segment height
     label.innerText = `${colorlevel[i]} mm`;
 
     colorSegment.appendChild(label);
@@ -249,7 +249,7 @@ function searchAddress() {
 // Function to show current location
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
+    navigator.geolocation.getCurrentPosition(showPosition, defalutPosition);
   } else {
     alert("此瀏覽器不支持地理位置服務。");
   }
@@ -258,6 +258,13 @@ function getLocation() {
 function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
+  displayMap(latitude, longitude, mapZoom);
+  displayWeatherOverlay();
+}
+
+function defalutPosition(position) {
+  const latitude = 25.0217447;
+  const longitude = 121.5351689;
   displayMap(latitude, longitude, mapZoom);
   displayWeatherOverlay();
 }
