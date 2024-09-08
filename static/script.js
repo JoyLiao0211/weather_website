@@ -204,8 +204,6 @@ function displayWeatherOverlay() {
     });
 }
 
-
-
 // Clear radar overlay
 function clearOverlay() {
   if (overlay) {
