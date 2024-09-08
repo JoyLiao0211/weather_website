@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>降雨報報</title>
+  <title>即時雨晴</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <h2><center>降雨報報</center></h2>
+  <h2><center>即時雨晴！我不想淋雨</center></h2>
 
   <div style="display:block; margin:10px 0px;"> 
     <p style="margin-bottom: 0px;">顯示降雨預報的地點</p>
@@ -37,10 +37,10 @@
   <!-- Dropdown to select radar overlay -->
   <label for="radarSelector">選擇資料圖：</label>
   <select id="radarSelector">
-    <option value="shulin">樹林雷達</option>
-    <option value="nantun">南屯雷達</option>
-    <option value="combined">整合雷達圖</option>
-    <option value="historical">降雨預測網格</option>
+    <option value="shulin">雷達回波圖 - 樹林測站</option>
+    <option value="nantun">雷達回波圖 - 南屯測站</option>
+    <option value="combined">雷達回波圖 - 全臺整合</option>
+    <option value="historical">未來一小時降雨量預測</option>
   </select>
 
   <br>
@@ -53,11 +53,13 @@
 
   <div id="controls">
     <!-- Slider to control radar overlay opacity -->
-    <div id="opacityControl" style="text-align: right; margin-right: 20px;">
+    <div id="opacityControl" style="text-align: right;">
       <input type="range" id="overlayOpacity" min="0" max="100" value="80" style="width: 110px;">
-      <label for="overlayOpacity">不透明度</label>
+      <label for="overlayOpacity">雷達回波圖不透明度</label>
     </div>
   </div>
+
+  <div id="update-time">time</div>
 
   <!-- Link to the external JavaScript file -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
