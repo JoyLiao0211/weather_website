@@ -19,3 +19,12 @@
 - 整合雷達圖
     - json: https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0058-003?Authorization=CWA-EAC5F54B-AD17-4E60-8715-38C2490AED66&downloadType=WEB&format=JSON
     - imgurl: https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png
+- 樹林：
+    - json: https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0084-001?Authorization=CWA-EAC5F54B-AD17-4E60-8715-38C2490AED66&downloadType=WEB&format=JSON
+    - imgurl: https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png
+- 南屯：
+    - json: https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0084-002?Authorization=CWA-EAC5F54B-AD17-4E60-8715-38C2490AED66&downloadType=WEB&format=JSON
+    - imgurl: https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png
+- 整合雷達圖
+    - json: https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0058-003?Authorization=CWA-EAC5F54B-AD17-4E60-8715-38C2490AED66&downloadType=WEB&format=JSON
+    - imgurl: https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png
