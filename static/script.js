@@ -149,7 +149,7 @@ function updateGrid() {
 
 document.getElementById('radarSelector').addEventListener('change', function() {
   const selectedOption = document.getElementById('radarSelector').value;
-
+  var opacityControl = document.getElementById('controls')
   if (selectedOption === "historical") {
     clearOverlay();  // Clear radar if it's active
     updateGrid();    // Display the historical rainfall grid
