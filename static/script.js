@@ -163,19 +163,6 @@ document.getElementById('radarSelector').addEventListener('change', function() {
   }
 });
 
-// Function to display radar overlay
-function displayWeatherOverlay() {
-  const selectedRadar = document.getElementById('radarSelector').value;
-  const radarInfo = radarData[selectedRadar];
-
-  if (overlay) {
-    overlay.setUrl(radarInfo.imageUrl);  // Update the radar image URL
-    overlay.setBounds(radarInfo.imageBounds);  // Update the radar bounds
-  } else {
-    overlay = L.imageOverlay(radarInfo.imageUrl, radarInfo.imageBounds, { opacity: 0.8 }).addTo(map);
-  }
-}
-
 // Function to display radar overlay and fetch DateTime from JSON
 function displayWeatherOverlay() {
   const selectedRadar = document.getElementById('radarSelector').value;
@@ -195,6 +182,8 @@ function displayWeatherOverlay() {
       if (data && data.cwaopendata && data.cwaopendata.dataset && data.cwaopendata.dataset.DateTime) {
         const dateTime = data.cwaopendata.dataset.DateTime;
         console.log('Radar DateTime:', dateTime);
+        var time_element = document.getElementById('update-time');
+        time_element.innerText = '更新時間: ' + dateTime;
       } else {
         console.error('DateTime not found in the JSON response');
       }
