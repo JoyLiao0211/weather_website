@@ -73,6 +73,7 @@ body {
   height: 40px;
   background-color: #f1f3f4; /* grey 50 */
   border-radius: 8px;
+  margin: 15px 0;
   /* border: 1.5px solid #91a0a8; */
 }
 #customAddressSection > input { /* grey 50 & grey 400*/
